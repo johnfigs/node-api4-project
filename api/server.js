@@ -42,4 +42,33 @@ server.post('/api/register', async (req, res) => {
 
 // [POST] /api/login
 
+server.post('/api/login', async (req, res) => {
+    try {
+        const { username, password } = req.body
+        const users = await User.find()
+        const foundUser = users.find(u => u.username === username && u.password === password)
+        if (foundUser) {
+            res.status(200).json({
+                message: "Login Successful"
+            })
+        } else {
+            const foundUser2 = users.find(u => u.username === username && u.password !== password)
+            if (foundUser2) {
+                res.status(200).json({
+                    message: "Username and password not valid"
+                })
+            } else {
+                res.status(404).json({
+                    message: "Username does not exist"                
+                    })
+            }
+        }
+    } catch(err) {
+        res.status(500).json({
+            message: "There was an error while trying to log you in"
+        })
+    }
+})
+
+
 module.exports = server
